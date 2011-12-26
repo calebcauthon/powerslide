@@ -17,37 +17,52 @@ function Animator() {
 		
 		if(typeof(dummyFn) != typeof(animation.onPause))
 			animation.onPause = function() {};
+		if(typeof(dummyFn) != typeof(animation.onResume))
+			animation.onResume = function() {};
+		if(typeof(dummyFn) != typeof(animation.onResumeExecute))
+			animation.onResumeExecute = function() {};
 		
+		animation.isPaused = false;
 		animation.hasCompleted = false;
-		
-		queue.push(animation);
+		queue.push(animation);		
 	};
 	var play = function() {
 		for(var i = 0; i < queue.length; i++)
 		{
 			var item = queue[i];
 				
-			if(!item.hasCompleted) // only reschedule incomplete animations
+			if(!item.hasCompleted || item.persistent)
 			{
 				item.startingTime = getCurrentTime();
-				var perforAnimationWithCallback = function(item, fn) {	
+				var perforAnimationWithCallback = function(item, wasPaused) {	
 					var env = { 
 						callback: function() {
 							item.hasCompleted = true;
 						}
 					};
-					return function() {			
+					return function() {		
+						if(wasPaused)
+							item.onResumeExecute.call(env);
+						
 						item.fn.call(env);
 					};
-				}(item);
+				}(item, item.isPaused);
 								
+				if(item.isPaused)
+				{
+					if(!item.persistent)
+						item.isPaused = false;
+						
+					item.onResume();
+				}
+				
 				if(item.delay) // check for a delay
 				{
 					var thisTimer = setTimeout(perforAnimationWithCallback, item.delay);
 					timers.push(thisTimer);
 				}
 				else
-				{												
+				{													
 					perforAnimationWithCallback();
 				}
 			}
@@ -68,11 +83,13 @@ function Animator() {
 			
 			item.delay = newDelay;
 			
-			if(!item.hasCompleted)
+			if(!item.hasCompleted || item.persistent)
+			{
 				item.onPause();
-			
+				item.isPaused = true;
+			}			
 			queue[i] = item;
-		}
+		}		
 	};
 	var resume = function() {		
 		play();

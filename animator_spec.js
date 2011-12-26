@@ -255,5 +255,104 @@ describe('animator', function() {
 				expect(age).toBe(20);
 			});			
 		});	
+		it('should consider the onResume event', function() {
+			var age = 10;
+			var animation = {
+				delay: 40,
+				fn: function() {
+					this.callback();
+				},
+				onResume: function() {
+					age = age + 10;					
+				}
+			};
+			
+			animator.add(animation);
+			animator.play();
+			
+			waits(30);
+			runs(function() {
+				animator.pause();	
+				
+				expect(age).toBe(10);
+				animator.resume();				
+				expect(age).toBe(20);
+			});
+		});
+		it('should not consider the onResume event for completed events', function() {
+			var age = 10;
+			var animation = {
+				delay: 10,
+				fn: function() {
+					this.callback();
+				},
+				onResume: function() {
+					age = age + 10;					
+				}
+			};
+			
+			animator.add(animation);
+			animator.play();
+			
+			waits(30);
+			runs(function() {
+				animator.pause();	
+				expect(age).toBe(10);
+				animator.resume();				
+				expect(age).toBe(10);
+			});				
+		});
+		it('should consider the onResumeExecute event', function() {
+			var age = 10;
+			var animation = {
+				delay: 50,
+				fn: function() {
+					this.callback();					
+				},
+				onResumeExecute: function() {
+					age = age + 10;					
+				}
+			};
+			
+			animator.add(animation);
+			animator.play();
+			
+			waits(20);
+			
+			runs(function() {
+				expect(age).toBe(10);
+				animator.pause();	
+				animator.resume();				
+				expect(age).toBe(10);
+			});	
+			waits(30);
+			runs(function() {
+				expect(age).toBe(20);
+			});
+		});
+		it('should consider the .persistent attr', function() {
+			var age = 10;
+			var animation = {
+				persistent: true,
+				delay: 10,
+				fn: function() {
+					age = age + 10;
+					this.callback();					
+				},		
+				onResume: function() {
+					age = age + 10;
+				}
+			};
+			
+			animator.add(animation);
+			animator.play();			
+			waits(20);
+			runs(function() {				
+				expect(age).toBe(20);
+				animator.pause();
+				animator.resume();
+				expect(age).toBe(30);
+			});			
+		});
 	});
 });
