@@ -2,12 +2,23 @@
 <script type="text/javascript" src="jasmine-1.1.0/jasmine.js"></script>
 <script type="text/javascript" src="jasmine-1.1.0/jasmine-html.js"></script>
 
-
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+<script type="text/javascript" src="http://static.flowplayer.org/js/flowplayer-3.2.6.min.js"></script>
 <script type="text/javascript" src="audioControls_spec.js"></script>
 <script type="text/javascript" src="audioControls.js"></script>
 
 
 <html><body>
+<a id="player" style="display:block;width:600px;height:453px;"></a>
+
+<a id="audioWrapper">
+<audio id="html5player" controls="controls">
+  <source src="song.ogg" type="audio/ogg" />
+  <source src="song.mp3" type="audio/mpeg" />
+  Your browser does not support the audio element.
+</audio>
+</a>
 <script type="text/javascript">
 	(function() {
 		var jasmineEnv = jasmine.getEnv();
