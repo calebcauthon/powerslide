@@ -384,4 +384,29 @@ describe('animator', function() {
 			});			
 		});
 	});
+	describe('clear', function() {
+		it('should have a clear() method', function() {
+			animator.clear();
+		});
+		it('should halt all future execution', function() {
+			var age = 10;
+			var fn1 = function() {
+				age = 30;
+			};
+			
+			animator.add({
+				fn: fn1,
+				delay: 30
+			});
+			
+			animator.play();
+			animator.clear();
+			animator.play();
+			waits(35);
+			runs(function() {
+				expect(age).toBe(10);
+			});
+			
+		});
+	});
 });

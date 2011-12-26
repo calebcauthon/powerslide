@@ -103,7 +103,12 @@ function Animator() {
 	var resume = function() {		
 		play();
 	};
+	var clear = function() {
+		pause();
+		queue = [];
+	};
 	return {
+		clear: clear,
 		add: add,
 		play: play,
 		pause: pause,
