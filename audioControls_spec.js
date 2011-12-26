@@ -31,7 +31,7 @@ describe('AudioControls', function() {
 		else
 			return $('#html5player')[0].currentTime;		
 	};
-	//setInterval(function() { console.log(getTime()); }, 100);
+	
 	var audioControls;
 	beforeEach(function() {
 		audioControls = new AudioControls();

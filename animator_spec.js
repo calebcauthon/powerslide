@@ -13,11 +13,11 @@ describe('animator', function() {
 	});
 	it('should have an add() method', function() {
 		animator.add({});
-	});
-	it('should have a play() method', function() {
-		animator.play();
-	});
+	});	
 	describe('play', function() {
+		it('should have a play() method', function() {
+			animator.play();
+		});
 		it('should execute 1 method which were added using add()', function() {
 			var a = 1;
 			var fn = function() {
@@ -89,11 +89,40 @@ describe('animator', function() {
 			
 			
 		});
-	});
-	it('should have a pause() method', function() {
-		animator.pause();
-	});
+		it('should accept a .wait parameter (milliseconds)', function() {
+			var age = 10;
+			
+			var fn1 = function() {
+				age = age + 5;
+			};
+			var fn2 = function() {
+				age = age + 10;
+			};
+			
+			animator.add({
+				fn: fn1,
+				delay: 25
+			});
+			animator.add({
+				fn: fn2,
+				wait: 10
+			});
+			
+			animator.play();
+			waits(30);
+			runs(function() {
+				expect(age).toBe(15);
+			});
+			waits(10)
+			runs(function() {
+				expect(age).toBe(25);
+			});
+		});
+	});	
 	describe('pause', function() {
+		it('should have a pause() method', function() {
+			animator.pause();
+		});
 		it('should halt all future executions', function() {
 			var old_value = 1;
 			var new_value = 2;
@@ -162,10 +191,10 @@ describe('animator', function() {
 			});	
 		});
 	});	
-	it('should have a resume() method', function() {
-		animator.resume();
-	});
 	describe('resume', function() {
+		it('should have a resume() method', function() {
+			animator.resume();
+		});	
 		it('should re-execute all un-executed methods', function() {
 			var old_value = 1;
 			var new_value = 2;

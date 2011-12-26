@@ -6,6 +6,8 @@ function Animator() {
 		var d = new Date();
 		return d.getTime();
 	};
+	
+	var lastDelay;
 	var add = function(instructions) {		
 		var dummyFn = function() {};		
 		var animation = {};
@@ -22,8 +24,15 @@ function Animator() {
 		if(typeof(dummyFn) != typeof(animation.onResumeExecute))
 			animation.onResumeExecute = function() {};
 		
+		if(animation.wait)
+			animation.delay = lastDelay + animation.wait;
+		
 		animation.isPaused = false;
 		animation.hasCompleted = false;
+		
+		if(animation.delay)
+			lastDelay = animation.delay;
+		
 		queue.push(animation);		
 	};
 	var play = function() {
