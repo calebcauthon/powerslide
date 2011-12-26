@@ -119,6 +119,48 @@ describe('animator', function() {
 				expect(a).toBe(old_value);
 			});
 		});		
+		it('should consider the onPause event', function() {
+			var age = 10;
+			var animation = {
+				delay: 10,
+				fn: function() {},
+				onPause: function() {
+					age = age + 10;
+				}
+			};
+			
+			animator.add(animation);
+			animator.play();
+			
+			waits(20);
+			runs(function() {
+				expect(age).toBe(10);
+				animator.pause();			
+				expect(age).toBe(20);
+			});			
+		});
+		it('should not consider onPause for completed events', function() {
+			var age = 10;
+			var animation = {
+				delay: 10,
+				fn: function() {
+					this.callback();
+				},
+				onPause: function() {
+					age = age + 10;					
+				}
+			};
+			
+			animator.add(animation);
+			animator.play();
+			
+			waits(30);
+			runs(function() {
+				expect(age).toBe(10);
+				animator.pause();			
+				expect(age).toBe(10);
+			});	
+		});
 	});	
 	it('should have a resume() method', function() {
 		animator.resume();
@@ -211,11 +253,7 @@ describe('animator', function() {
 			waits(250);
 			runs(function() {
 				expect(age).toBe(20);
-			});
-			
-			
-			
-			
-		});
+			});			
+		});	
 	});
 });

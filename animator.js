@@ -2,22 +2,21 @@ function Animator() {
 	var queue = [];
 	var timers = [];
 	
-	
 	var getCurrentTime = function() {		
 		var d = new Date();
 		return d.getTime();
 	};
 	var add = function(instructions) {		
-		var dummyObj = function() {};
-		
+		var dummyFn = function() {};		
 		var animation = {};
 		
-		if(typeof(dummyObj) == typeof(instructions))
-		{
+		if(typeof(dummyFn) == typeof(instructions))
 			animation.fn = instructions;
-		}
 		else
 			animation = instructions;
+		
+		if(typeof(dummyFn) != typeof(animation.onPause))
+			animation.onPause = function() {};
 		
 		animation.hasCompleted = false;
 		
@@ -61,13 +60,16 @@ function Animator() {
 		}
 		
 		for(var i = 0; i < queue.length; i++)
-		{
-			var item = queue[i];
+		{						
+			var item = queue[i];			
 			var originalDelay = item.delay;
 			var lostTime = getCurrentTime() - item.startingTime;
 			var newDelay = originalDelay - lostTime;
 			
 			item.delay = newDelay;
+			
+			if(!item.hasCompleted)
+				item.onPause();
 			
 			queue[i] = item;
 		}
